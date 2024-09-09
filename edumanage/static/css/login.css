@@ -1,0 +1,128 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+.container {
+  width: 100%;
+  padding: 20px;
+  margin-top: 25px;
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  gap: 20px;
+  box-sizing: border-box;
+}
+
+.login-section_school-college,
+.login-section_student-faculty {
+  background-color: #ffffff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  border: 1px solid #e0e0e0;
+  width: 600px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.login-section_school-college h2,
+.login-section_student-faculty h2 {
+  margin-bottom: 20px;
+  color: #003285;
+  font-size: 1.5em;
+  text-align: center;
+}
+
+.login-section_school-college input,
+.login-section_student-faculty input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ff7f3e;
+  border-radius: 6px;
+  margin-bottom: 15px;
+  font-size: 1em;
+  box-sizing: border-box;
+}
+
+button {
+  background-color: #ff7f3e;
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1.1em;
+  margin-top: 10px;
+  width: 100%;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #ff5722;
+}
+
+.navbar {
+  width: 100%;
+  height: 80px;
+  background-color: #003285;
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
+  box-sizing: border-box;
+  color: #fff;
+}
+
+.navbar-brand {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.extra-options {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.extra-options a {
+  font-size: 14px;
+  color: #003285;
+  text-decoration: none;
+}
+
+.extra-options a:hover {
+  text-decoration: underline;
+}
+
+.error {
+  color: red;
+  font-size: 0.9em;
+  margin-top: 5px;
+}
+
+.copyright {
+  position: absolute;
+  bottom: 5px;
+  left: 10px;
+  font-size: 14px;
+  color: #003285;
+}
+
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+    padding: 10px;
+  }
+
+  .login-section_school-college,
+  .login-section_student-faculty {
+    width: 100%;
+  }
+}

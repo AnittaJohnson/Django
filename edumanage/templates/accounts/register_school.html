@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/reg.css' %}" />
+    <style>
+      /* Popup CSS */
+      .popup {
+        display: none;
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        padding: 20px;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+      }
+      .popup.show {
+        display: block;
+      }
+      .popup button {
+        margin-top: 10px;
+        background-color: #ff8225;
+        color: #fff;
+        border: none;
+        padding: 10px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar">
+      <a class="navbar-brand">EduManage</a>
+      <a href="{% url 'login' %}" class="back-link">Back</a>
+    </nav>
+    <div class="container">
+      <div class="register-section">
+        <h2>Register</h2>
+        <form method="post">
+          {% csrf_token %}
+          <div class="form-grid">
+            {% for field in form %}
+            <div class="form-group">
+              {{ field.label_tag }} {{ field }} {% if field.errors %}
+              <div class="error">{{ field.errors }}</div>
+              {% endif %}
+            </div>
+            {% endfor %}
+          </div>
+          <button type="submit">Register</button>
+        </form>
+      </div>
+    </div>
+    <div class="copyright">
+      <p>&copy; EduManage</p>
+    </div>
+
+    <!-- Popup HTML -->
+    <div id="popup" class="popup">
+      <p id="popup-message"></p>
+      <button id="popup-button">Go to Login</button>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const messages = [
+          {% for message in messages %}
+            "{{ message }}",
+          {% endfor %}
+        ];
+
+        if (messages.length > 0) {
+          const popup = document.getElementById('popup');
+          const popupMessage = document.getElementById('popup-message');
+          const popupButton = document.getElementById('popup-button');
+          popupMessage.textContent = messages.join(' ');
+          popup.classList.add('show');
+
+          popupButton.addEventListener('click', function() {
+            window.location.href = "{% url 'login' %}";
+          });
+        }
+
+      });
+    </script>
+  </body>
+</html>

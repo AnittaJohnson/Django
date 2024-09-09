@@ -1,0 +1,45 @@
+{% extends 'base.html' %} {% block content %}
+<h2>Student List</h2>
+<table>
+  <tr>
+    <th>Id</th>
+    <th>Name</th>
+    <th>Email</th>
+    <th>Class</th>
+    <th>Section</th>
+    <th>Actions</th>
+  </tr>
+  {% for student in students %}
+  <tr>
+    <td>{{ student.id }}</td>
+    <td>{{ student.name }}</td>
+    <td>{{ student.email }}</td>
+    <td>{{ student.student_class }}</td>
+    <td>{{ student.section }}</td>
+    <td>
+      <a href="{% url 'student_edit' student.id %}">Edit</a> |
+      <a href="{% url 'student_delete' student.id %}">Delete</a>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+
+<div class="pagination">
+  <span class="step-links">
+    {% if students.has_previous %}
+    <a href="?page=1">&laquo; first</a>
+    <a href="?page={{ students.previous_page_number }}">previous</a>
+    {% endif %}
+
+    <span class="current">
+      Page {{ students.number }} of {{ students.paginator.num_pages }}.
+    </span>
+
+    {% if students.has_next %}
+    <a href="?page={{ students.next_page_number }}">next</a>
+    <a href="?page={{ students.paginator.num_pages }}">last &raquo;</a>
+    {% endif %}
+  </span>
+</div>
+<a href="{% url 'student_add' %}">Add Student</a>
+{% endblock %}
