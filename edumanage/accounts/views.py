@@ -10,6 +10,60 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import Student
 from .forms import StudentForm  # Create this form for the Student model
 from django.core.paginator import Paginator
+from django.core.mail import send_mail
+from django.contrib.auth import get_user_model
+from django.utils.crypto import get_random_string
+from django.http import JsonResponse
+
+User = get_user_model()
+
+# Store OTPs temporarily in session or another method
+def send_otp(email):
+    otp = get_random_string(length=6, allowed_chars='0123456789')
+    subject = "Password Reset OTP"
+    message = f"Your OTP for password reset is {otp}"
+    send_mail(subject, message, 'no-reply@edumanage.com', [email])
+    return otp
+
+def forget_password(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        try:
+            user = User.objects.get(email=email)
+            otp = send_otp(user.email)
+            request.session['otp'] = otp
+            request.session['email'] = email
+            return JsonResponse({'status': 'otp_sent'})
+        except User.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Email does not exist'})
+    return render(request, 'accounts/forget_password.html')
+
+def verify_otp(request):
+    if request.method == 'POST':
+        entered_otp = request.POST.get('otp')
+        if entered_otp == request.session.get('otp'):
+            return JsonResponse({'status': 'otp_verified'})
+        else:
+            return JsonResponse({'status': 'error', 'message': 'Invalid OTP'})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'})
+
+def reset_password(request):
+    if request.method == 'POST':
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+        if new_password == confirm_password:
+            email = request.session.get('email')
+            try:
+                user = User.objects.get(email=email)
+                user.set_password(new_password)
+                user.save()
+                return JsonResponse({'status': 'password_reset'})
+            except User.DoesNotExist:
+                return JsonResponse({'status': 'error', 'message': 'User not found'})
+        else:
+            return JsonResponse({'status': 'error', 'message': 'Passwords do not match'})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'})
+
 
 def login_view(request):
     return render(request, 'accounts/login.html')
@@ -37,8 +91,6 @@ def student_login(request):
         pass
     return render(request, 'accounts/student_login.html')  
 
-def forget_password(request):
-    return render(request, 'accounts/forget_password.html')
 
 def register_school(request):
     if request.method == 'POST':
@@ -99,11 +151,20 @@ def logout_view(request):
 
 @login_required
 def student_list(request):
+    search_query = request.GET.get('search', '')
     students = Student.objects.filter(school=request.user)  # Filter by the logged-in school
+    
+    if search_query:
+        students = students.filter(name__icontains=search_query)
+        
     paginator = Paginator(students, 10)  
     page = request.GET.get('page')
     students_page = paginator.get_page(page)
-    return render(request, 'accounts/student_list.html', {'students': students_page})
+    
+    return render(request, 'accounts/student_list.html', {
+        'students': students_page,
+        'search_query': search_query
+    })
 
 @login_required
 def student_add(request):
@@ -136,4 +197,5 @@ def student_delete(request, student_id):
     student = get_object_or_404(Student, id=student_id, school=request.user)
     student.delete()
     return redirect('student_list')
+
 

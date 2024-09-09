@@ -12,7 +12,6 @@
       <a class="navbar-brand" style="font-size: 24px; font-weight: bold"
         >EduManage</a
       >
-      <a href="{% url 'student_list' %}" class="nav-link">Students</a>
       <span class="school-name">Welcome! {{ user.school_name }}</span>
     </nav>
 
@@ -26,9 +25,7 @@
           <button type="submit" class="btn btn-primary">
             {% if student %}Update{% else %}Add{% endif %} Student
           </button>
-          <a href="{% url 'student_list' %}" class="btn btn-secondary"
-            >Cancel</a
-          >
+          <a href="{% url 'student_list' %}" class="btn btn-secondary">Back</a>
         </div>
       </form>
     </div>

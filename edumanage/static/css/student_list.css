@@ -133,3 +133,31 @@ h2 {
 .current {
   margin: 0 10px;
 }
+
+.search-box {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 20px;
+}
+
+.search-box input {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.search-box button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  background-color: #003285;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.search-box button:hover {
+  background-color: #002060;
+}

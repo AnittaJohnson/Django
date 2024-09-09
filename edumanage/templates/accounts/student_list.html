@@ -13,7 +13,9 @@
         >EduManage</a
       >
       <a href="#" class="nav-link">Analytics</a>
-      <a href="{% url 'student_list' %}" class="nav-link">Students</a>
+      <a href="{% url 'student_list' %}" class="nav-link" style="color: #ffda78"
+        >Students</a
+      >
       <a href="#" class="nav-link">Faculty</a>
       <a href="#" class="nav-link">Fee</a>
       <a href="#" class="nav-link">Events</a>
@@ -29,6 +31,18 @@
         <a href="{% url 'student_add' %}" class="btn btn-primary"
           >Add Student</a
         >
+      </div>
+
+      <div class="search-box">
+        <form action="{% url 'student_list' %}" method="get">
+          <input
+            type="text"
+            name="search"
+            placeholder="Search by name..."
+            value="{{ request.GET.search }}"
+          />
+          <button type="submit" class="btn btn-primary">Search</button>
+        </form>
       </div>
 
       <!-- Student Table -->
