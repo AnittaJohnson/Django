@@ -99,8 +99,8 @@ def logout_view(request):
 
 @login_required
 def student_list(request):
-    students = Student.objects.filter(school=request.user)  # Only list students for the logged-in school
-    paginator = Paginator(students, 20)  # 20 students per page
+    students = Student.objects.filter(school=request.user)  # Filter by the logged-in school
+    paginator = Paginator(students, 10)  
     page = request.GET.get('page')
     students_page = paginator.get_page(page)
     return render(request, 'accounts/student_list.html', {'students': students_page})
@@ -130,8 +130,10 @@ def student_edit(request, student_id):
         form = StudentForm(instance=student)
     return render(request, 'accounts/student_form.html', {'form': form})
 
+
 @login_required
 def student_delete(request, student_id):
     student = get_object_or_404(Student, id=student_id, school=request.user)
     student.delete()
     return redirect('student_list')
+
