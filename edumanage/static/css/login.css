@@ -19,8 +19,7 @@ body {
   box-sizing: border-box;
 }
 
-.login-section_school-college,
-.login-section_student-faculty {
+.login-section {
   background-color: #ffffff;
   padding: 30px;
   border-radius: 12px;
@@ -33,16 +32,14 @@ body {
   justify-content: center;
 }
 
-.login-section_school-college h2,
-.login-section_student-faculty h2 {
+.login-section h2 {
   margin-bottom: 20px;
   color: #003285;
   font-size: 1.5em;
   text-align: center;
 }
 
-.login-section_school-college input,
-.login-section_student-faculty input {
+.login-section input {
   width: 100%;
   padding: 12px;
   border: 1px solid #ff7f3e;
@@ -85,16 +82,51 @@ button:hover {
   font-weight: bold;
 }
 
+.login-type {
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+}
+
+.login-type label {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+}
+
+.login-type input[type="radio"] {
+  margin-right: 10px;
+  margin-top: 10px;
+}
+
 .extra-options {
   display: flex;
   justify-content: space-between;
   margin-top: 10px;
 }
 
+.links-left,
+.links-right {
+  display: flex;
+  align-items: center;
+}
+
+.links-left {
+  flex: 1; /* Allows the left links to take up available space */
+}
+
+.links-right {
+  flex: 1; /* Allows the right links to take up available space */
+  justify-content: flex-end; /* Align links to the right */
+}
+
 .extra-options a {
   font-size: 14px;
   color: #003285;
   text-decoration: none;
+  margin-left: 10px; /* Space between links */
 }
 
 .extra-options a:hover {
@@ -121,8 +153,7 @@ button:hover {
     padding: 10px;
   }
 
-  .login-section_school-college,
-  .login-section_student-faculty {
+  .login-section {
     width: 100%;
   }
 }

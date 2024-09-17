@@ -31,6 +31,15 @@
         padding: 10px;
         cursor: pointer;
       }
+
+      .login-section_school-college,
+      .login-section_student-faculty {
+        display: none; /* Hide both initially */
+      }
+
+      .show-login {
+        display: block; /* Show login form */
+      }
     </style>
   </head>
   <body>
@@ -38,78 +47,129 @@
       <a class="navbar-brand">EduManage</a>
     </nav>
     <div class="container">
-      <div class="login-section_school-college">
-        <h2>SCHOOL/COLLEGE LOGIN</h2>
-        <form action="{% url 'school_login' %}" method="post">
-          {% csrf_token %}
-          <input type="text" name="school_id" placeholder="Email" required />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            required
-          />
-          <button type="submit">Login</button>
-        </form>
-        <div class="extra-options">
-          <a href="{% url 'register_school' %}" class="register-link"
-            >Register</a
-          >
-          <a href="{% url 'forget_password' %}">Forgot Password?</a>
+      <div class="login-section">
+        <h2>Login</h2>
+
+        <!-- Radio buttons to select login type -->
+        <div class="login-type">
+          <label>
+            <input
+              type="radio"
+              name="loginType"
+              value="school"
+              id="schoolRadio"
+              checked
+            />
+            School/College
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="loginType"
+              value="student"
+              id="studentRadio"
+            />
+            Student/Faculty
+          </label>
         </div>
-      </div>
-      <div class="login-section_student-faculty">
-        <h2>STUDENT/FACULTY LOGIN</h2>
-        <form action="{% url 'student_login' %}" method="post">
-          {% csrf_token %}
-          <input
-            type="text"
-            name="username"
-            placeholder="Email or Username"
-            required
-          />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            required
-          />
-          <button type="submit">Login</button>
-        </form>
-        <div class="extra-options">
-          <a href="{% url 'forget_password' %}">Forgot Password?</a>
+
+        <!-- SCHOOL/COLLEGE LOGIN FORM -->
+        <div id="schoolForm" class="login-section_school-college show-login">
+          <h2>SCHOOL/COLLEGE LOGIN</h2>
+          <form action="{% url 'school_login' %}" method="post">
+            {% csrf_token %}
+            <input type="text" name="school_id" placeholder="Email" required />
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              required
+            />
+            <button type="submit">Login</button>
+          </form>
+          <div class="extra-options">
+            <div class="links-left">
+              <a href="{% url 'register_school' %}" class="register-link"
+                >Register</a
+              >
+            </div>
+            <div class="links-right">
+              <a href="{% url 'forget_password' %}">Forgot Password?</a>
+            </div>
+          </div>
         </div>
+
+        <!-- STUDENT/FACULTY LOGIN FORM -->
+        <div id="studentForm" class="login-section_student-faculty">
+          <h2>STUDENT/FACULTY LOGIN</h2>
+          <form action="{% url 'student_login' %}" method="post">
+            {% csrf_token %}
+            <input type="text" name="username" placeholder="Email" required />
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              required
+            />
+            <button type="submit">Login</button>
+          </form>
+          <div class="extra-options">
+            <div class="links-right">
+              <a href="{% url 'forget_password' %}">Forgot Password?</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Popup HTML -->
+        <div id="popup" class="popup">
+          <p id="popup-message"></p>
+          <button onclick="closePopup()">OK</button>
+        </div>
+
+        <script>
+          document.addEventListener('DOMContentLoaded', function () {
+            const messages = [
+              {% for message in messages %}
+                "{{ message }}",
+              {% endfor %}
+            ];
+
+            if (messages.length > 0) {
+              const popup = document.getElementById('popup');
+              const popupMessage = document.getElementById('popup-message');
+              popupMessage.textContent = messages.join(' ');
+              popup.classList.add('show');
+            }
+
+            function closePopup() {
+              document.getElementById('popup').classList.remove('show');
+            }
+
+            // Switch between School/College and Student/Faculty login forms
+            const schoolRadio = document.getElementById('schoolRadio');
+            const studentRadio = document.getElementById('studentRadio');
+            const schoolForm = document.getElementById('schoolForm');
+            const studentForm = document.getElementById('studentForm');
+
+            function toggleLoginType() {
+              if (schoolRadio.checked) {
+                schoolForm.classList.add('show-login');
+                studentForm.classList.remove('show-login');
+              } else if (studentRadio.checked) {
+                studentForm.classList.add('show-login');
+                schoolForm.classList.remove('show-login');
+              }
+            }
+
+            // Add event listeners for radio button changes
+            schoolRadio.addEventListener('change', toggleLoginType);
+            studentRadio.addEventListener('change', toggleLoginType);
+
+            // Initialize form visibility based on the default checked radio button
+            toggleLoginType();
+          });
+        </script>
       </div>
     </div>
-    <div class="copyright">
-      <p>&copy; EduManage</p>
-    </div>
-
-    <!-- Popup HTML -->
-    <div id="popup" class="popup">
-      <p id="popup-message"></p>
-      <button onclick="closePopup()">OK</button>
-    </div>
-
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        const messages = [
-          {% for message in messages %}
-            "{{ message }}",
-          {% endfor %}
-        ];
-
-        if (messages.length > 0) {
-          const popup = document.getElementById('popup');
-          const popupMessage = document.getElementById('popup-message');
-          popupMessage.textContent = messages.join(' ');
-          popup.classList.add('show');
-        }
-      });
-
-      function closePopup() {
-        document.getElementById('popup').classList.remove('show');
-      }
-    </script>
   </body>
 </html>
