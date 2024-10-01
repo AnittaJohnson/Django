@@ -26,11 +26,17 @@
     <div class="container">
       <h2>Student List</h2>
 
-      <!-- Add Student Button -->
-      <div class="add-student">
-        <a href="{% url 'student_add' %}" class="btn btn-primary"
-          >Add Student</a
-        >
+      <div class="button-container">
+        <div class="add-student">
+          <a href="{% url 'student_add' %}" class="btn btn-primary"
+            >Add Student</a
+          >
+        </div>
+        <div class="export-button">
+          <a href="{% url 'export_students' %}" class="btn btn-primary"
+            >Export to Excel</a
+          >
+        </div>
       </div>
 
       <div class="search-box">

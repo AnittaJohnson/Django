@@ -14,6 +14,9 @@ from django.core.mail import send_mail
 from django.contrib.auth import get_user_model
 from django.utils.crypto import get_random_string
 from django.http import JsonResponse
+import openpyxl
+from django.http import HttpResponse
+from datetime import datetime
 
 User = get_user_model()
 
@@ -199,3 +202,37 @@ def student_delete(request, student_id):
     return redirect('student_list')
 
 
+
+@login_required
+def export_students(request):
+    students = Student.objects.filter(school=request.user)
+    school_name = request.user.school_name
+    current_datetime = datetime.now().strftime("%Y-%m-%d_%H-%M")  # Use underscores for the filename
+
+    # Create an in-memory workbook
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = f'Students_List_{school_name}'
+
+    # Add the header row
+    ws.append(['ID', 'Name', 'Email', 'Roll No.', 'Class', 'Section', 'Fee'])
+
+    # Add student data rows
+    for student in students:
+        ws.append([
+            student.id,
+            student.name,
+            student.email,
+            student.roll_no,
+            student.student_class,
+            student.section,
+            student.fee,
+        ])
+
+    # Prepare response to download the file
+    file_name = f'Student_List_{school_name}_{current_datetime}.xlsx'  # Create the desired file name
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = f'attachment; filename={file_name}'  # Set the filename in the response header
+
+    wb.save(response)  # Save the workbook to the response
+    return response
