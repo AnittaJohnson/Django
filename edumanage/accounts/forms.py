@@ -1,5 +1,6 @@
 from django import forms
 from .models import Student
+from .models import Faculty
 
 
 class RegisterForm(forms.Form):
@@ -50,3 +51,11 @@ class StudentForm(forms.ModelForm):
     class Meta:
         model = Student
         fields = ['name', 'email', 'number', 'fathers_name', 'dob', 'roll_no', 'student_class', 'section', 'fee']
+        
+        
+class FacultyForm(forms.ModelForm):
+    joining_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+    
+    class Meta:
+        model = Faculty
+        fields = ['emp_id', 'name', 'email', 'contact', 'subject', 'joining_date', 'salary']

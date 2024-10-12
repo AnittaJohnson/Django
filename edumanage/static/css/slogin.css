@@ -42,6 +42,10 @@ body {
   color: #ffda78; /* Optional hover effect */
 }
 
+.navbar-brand {
+  color: #ffda78;
+}
+
 /* Organization details styling */
 .organization-details {
   background-color: #f4f4f4;

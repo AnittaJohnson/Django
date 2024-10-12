@@ -86,3 +86,17 @@ class Student(models.Model):
 
     def __str__(self):
         return self.name
+    
+    
+class Faculty(models.Model):
+    school = models.ForeignKey(User, on_delete=models.CASCADE)  # Linking to the school
+    emp_id = models.CharField(max_length=50, unique=True)  # Employee ID
+    name = models.CharField(max_length=255)
+    email = models.EmailField(unique=True)
+    contact = models.CharField(max_length=20)
+    subject = models.CharField(max_length=255)
+    joining_date = models.DateField()
+    salary = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return self.name

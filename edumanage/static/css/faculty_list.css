@@ -161,3 +161,38 @@ h2 {
 .search-box button:hover {
   background-color: #002060;
 }
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .container {
+    padding: 15px;
+  }
+
+  h2 {
+    font-size: 1.5em;
+  }
+
+  button,
+  .btn {
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .navbar {
+    flex-direction: column;
+    height: auto;
+    padding: 10px;
+  }
+
+  .navbar-brand {
+    margin-bottom: 10px;
+  }
+
+  .nav-link {
+    font-size: 14px;
+  }
+
+  .school-name {
+    font-size: 14px;
+  }
+}

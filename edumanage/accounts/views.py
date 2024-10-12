@@ -17,6 +17,8 @@ from django.http import JsonResponse
 import openpyxl
 from django.http import HttpResponse
 from datetime import datetime
+from .models import Faculty  # Ensure this import is correct
+from .forms import FacultyForm
 
 User = get_user_model()
 
@@ -231,6 +233,92 @@ def export_students(request):
 
     # Prepare response to download the file
     file_name = f'Student_List_{school_name}_{current_datetime}.xlsx'  # Create the desired file name
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = f'attachment; filename={file_name}'  # Set the filename in the response header
+
+    wb.save(response)  # Save the workbook to the response
+    return response
+
+
+@login_required
+def faculty_list(request):
+    search_query = request.GET.get('search', '')
+    
+    if search_query:
+        faculties = Faculty.objects.filter(name__icontains=search_query)
+    else:
+        faculties = Faculty.objects.all()
+
+    # Pagination
+    paginator = Paginator(faculties, 10)  # Show 10 faculties per page
+    page_number = request.GET.get('page')
+    faculties_page = paginator.get_page(page_number)
+
+    return render(request, 'accounts/faculty_list.html', {
+        'faculties': faculties_page,
+        'search_query': search_query,
+    })
+    
+    
+@login_required
+def faculty_add(request):
+    if request.method == 'POST':
+        form = FacultyForm(request.POST)
+        if form.is_valid():
+            faculty = form.save(commit=False)
+            faculty.school = request.user
+            faculty.save()
+            return redirect('faculty_list')
+    else:
+        form = FacultyForm()
+    return render(request, 'accounts/faculty_form.html', {'form': form})
+
+@login_required
+def faculty_edit(request, faculty_id):
+    faculty = get_object_or_404(Faculty, id=faculty_id, school=request.user)
+    if request.method == 'POST':
+        form = FacultyForm(request.POST, instance=faculty)
+        if form.is_valid():
+            form.save()
+            return redirect('faculty_list')
+    else:
+        form = FacultyForm(instance=faculty)
+    return render(request, 'accounts/faculty_form.html', {'form': form, 'faculty': faculty})
+
+@login_required
+def faculty_delete(request, faculty_id):
+    faculty = get_object_or_404(Faculty, id=faculty_id, school=request.user)
+    faculty.delete()
+    return redirect('faculty_list')
+
+
+@login_required
+def export_faculties(request):
+    faculties = Faculty.objects.filter(school=request.user)
+    school_name = request.user.school_name
+    current_datetime = datetime.now().strftime("%Y-%m-%d_%H-%M")  # Use underscores for the filename
+
+    # Create an in-memory workbook
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = f'Faculty_List_{school_name}'
+
+    # Add the header row
+    ws.append(['Employee ID', 'Name', 'Email', 'Contact', 'Subject', 'Salary'])
+
+    # Add faculty data rows
+    for faculty in faculties:
+        ws.append([
+            faculty.emp_id,
+            faculty.name,
+            faculty.email,
+            faculty.contact,
+            faculty.subject,
+            faculty.salary,
+        ])
+
+    # Prepare response to download the file
+    file_name = f'Faculty_List_{school_name}_{current_datetime}.xlsx'  # Create the desired file name
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     response['Content-Disposition'] = f'attachment; filename={file_name}'  # Set the filename in the response header
 

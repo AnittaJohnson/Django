@@ -16,5 +16,10 @@ urlpatterns = [
     path('verify-otp/', views.verify_otp, name='verify_otp'),
     path('reset-password/', views.reset_password, name='reset_password'),
     path('export_students/', views.export_students, name='export_students'),
+    path('faculty/', views.faculty_list, name='faculty_list'),
+    path('faculty/add/', views.faculty_add, name='faculty_add'),
+    path('faculty/<int:faculty_id>/edit/', views.faculty_edit, name='faculty_edit'),
+    path('faculty/<int:faculty_id>/delete/', views.faculty_delete, name='faculty_delete'),
+    path('export_faculties/', views.export_faculties, name='export_faculties'),
 
 ]

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% if faculty %}Edit{% else %}Add{% endif %} Faculty</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/faculty_form.css' %}" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <a
+        href="{% url 'school_details' %}"
+        class="navbar-brand"
+        style="font-size: 24px; font-weight: bold"
+        >EduManage</a
+      >
+      <span class="school-name">Welcome! {{ user.school_name }}</span>
+    </nav>
+
+    <div class="container">
+      <h2>{% if faculty %}Edit{% else %}Add{% endif %} Faculty</h2>
+
+      <form method="POST">
+        {% csrf_token %} {{ form.as_p }}
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">
+            {% if faculty %}Update{% else %}Add{% endif %} Faculty
+          </button>
+          <a href="{% url 'faculty_list' %}" class="btn btn-secondary">Back</a>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>
