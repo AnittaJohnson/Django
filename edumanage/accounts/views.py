@@ -7,6 +7,7 @@ from django.contrib.auth import logout
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 from .models import Student
 from .forms import StudentForm  # Create this form for the Student model
 from django.core.paginator import Paginator
@@ -14,11 +15,19 @@ from django.core.mail import send_mail
 from django.contrib.auth import get_user_model
 from django.utils.crypto import get_random_string
 from django.http import JsonResponse
-import openpyxl
+import openpyxl, os
 from django.http import HttpResponse
 from datetime import datetime
 from .models import Faculty  # Ensure this import is correct
 from .forms import FacultyForm
+from .models import Event
+from .forms import EventForm, FeeForm
+from django.db.models.signals import pre_save, pre_delete
+from django.dispatch import receiver
+from .models import Fee
+from django.utils import timezone
+from datetime import datetime, timedelta
+from django.views import View
 
 User = get_user_model()
 
@@ -324,3 +333,103 @@ def export_faculties(request):
 
     wb.save(response)  # Save the workbook to the response
     return response
+
+
+@login_required
+def event_list(request):
+    search_query = request.GET.get('search', '')
+    events = Event.objects.filter(school=request.user)
+
+    if search_query:
+        events = Event.objects.filter(details__icontains=search_query).order_by('-time')
+    else:
+        events = Event.objects.all().order_by('-time')
+    
+    paginator = Paginator(events, 5)
+    page = request.GET.get('page')
+    events_page = paginator.get_page(page)
+
+    return render(request, 'accounts/event_list.html', {
+        'events': events_page,
+        'search_query': search_query,
+    })
+
+@login_required
+def event_add(request):
+    if request.method == 'POST':
+        form = EventForm(request.POST, request.FILES)
+        if form.is_valid():
+            event = form.save(commit=False)
+            event.school = request.user
+            event.save()
+            return redirect('event_list')
+    else:
+        form = EventForm()
+    return render(request, 'accounts/event_form.html', {'form': form})
+
+@login_required
+def event_edit(request, event_id):
+    event = get_object_or_404(Event, id=event_id, school=request.user)
+    if request.method == 'POST':
+        form = EventForm(request.POST, request.FILES, instance=event)
+        if form.is_valid():
+            form.save()
+            return redirect('event_list')
+    else:
+        form = EventForm(instance=event)
+    return render(request, 'accounts/event_form.html', {'form': form})
+
+@login_required
+def event_delete(request, event_id):
+    event = get_object_or_404(Event, id=event_id, school=request.user)
+    event.delete()
+    return redirect('event_list')
+
+
+@login_required
+def fee_list(request):
+    fees = Fee.objects.filter(student__school=request.user)  # Filter by the logged-in school
+    return render(request, 'accounts/fee.html', {'fees': fees})
+
+@login_required
+@csrf_exempt
+def fee_add(request):
+    if request.method == 'POST':
+        form = FeeForm(request.POST)
+        if form.is_valid():
+            fee = form.save(commit=False)
+            fee.student.school = request.user  # Associate the fee with the logged-in school
+            fee.save()
+            return redirect('fee')
+    else:
+        form = FeeForm()
+    return render(request, 'accounts/fee_form.html', {'form': form})
+
+@login_required
+def fee_edit(request, fee_id):
+    fee = get_object_or_404(Fee, id=fee_id, student__school=request.user)
+    if request.method == 'POST':
+        form = FeeForm(request.POST, instance=fee)
+        if form.is_valid():
+            form.save()
+            return redirect('fee')
+    else:
+        form = FeeForm(instance=fee)
+    return render(request, 'accounts/fee_form.html', {'form': form})
+
+@login_required
+def fee_delete(request, fee_id):
+    fee = get_object_or_404(Fee, id=fee_id, student__school=request.user)
+    fee.delete()
+    return redirect('fee')
+
+def get_due_date():
+    today = timezone.now()
+    next_month = today.month % 12 + 1
+    due_date = datetime(today.year + (today.month // 12), next_month, 5)
+    return due_date
+
+# In your view where you fetch the fees
+fees = Fee.objects.all()
+for fee in fees:
+    fee.due_date = get_due_date()  # Set due date for each fee

@@ -22,8 +22,8 @@
       <a href="{% url 'student_list' %}" class="nav-link">Students</a>
 
       <a href="{% url 'faculty_list' %}" class="nav-link">Faculty</a>
-      <a href="#" class="nav-link">Fee</a>
-      <a href="#" class="nav-link">Events</a>
+      <a href="{% url 'fee' %}" class="nav-link">Fee</a>
+      <a href="{% url 'event_list' %}" class="nav-link">Events</a>
       <a href="{% url 'login' %}" class="logout-link">Logout</a>
       <span class="school-name">Welcome! {{ user.school_name }}</span>
     </nav>

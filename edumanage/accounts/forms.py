@@ -1,6 +1,7 @@
 from django import forms
-from .models import Student
+from .models import Student, Fee
 from .models import Faculty
+from .models import Event
 
 
 class RegisterForm(forms.Form):
@@ -59,3 +60,22 @@ class FacultyForm(forms.ModelForm):
     class Meta:
         model = Faculty
         fields = ['emp_id', 'name', 'email', 'contact', 'subject', 'joining_date', 'salary']
+        
+        
+class EventForm(forms.ModelForm):
+    class Meta:
+        model = Event
+        fields = ['time', 'details', 'image']  # Fields to include in the form
+        widgets = {
+            'time': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+        }
+        
+        
+class FeeForm(forms.ModelForm):
+    class Meta:
+        model = Fee
+        fields = ['student', 'amount', 'due_date', 'is_paid']
+        
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['student'].queryset = Student.objects.filter(school=kwargs['user'])

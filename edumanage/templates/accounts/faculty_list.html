@@ -20,8 +20,8 @@
       <a href="{% url 'faculty_list' %}" class="nav-link" style="color: #ffda78"
         >Faculty</a
       >
-      <a href="#" class="nav-link">Fee</a>
-      <a href="#" class="nav-link">Events</a>
+      <a href="{% url 'fee' %}" class="nav-link">Fee</a>
+      <a href="{% url 'event_list' %}" class="nav-link">Events</a>
       <a href="{% url 'logout' %}" class="logout-link">Logout</a>
       <span class="school-name">Welcome! {{ user.school_name }}</span>
     </nav>

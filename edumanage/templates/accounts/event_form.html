@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% if event %}Edit{% else %}Add{% endif %} Event</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/event_form.css' %}" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <a class="navbar-brand" style="font-size: 24px; font-weight: bold"
+        >EduManage</a
+      >
+      <span class="school-name">Welcome! {{ user.school_name }}</span>
+    </nav>
+
+    <div class="container">
+      <h2>{% if event %}Edit{% else %}Add{% endif %} Event</h2>
+
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %} {{ form.as_p }}
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">
+            {% if event %}Update{% else %}Add{% endif %} Event
+          </button>
+          <a href="{% url 'event_list' %}" class="btn btn-secondary">Back</a>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% if form.instance.pk %}Edit Fee{% else %}Add Fee{% endif %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/fee.css' %}" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <a href="{% url 'school_details' %}">EduManage</a>
+      <a href="{% url 'fee_list' %}">Back to Fee List</a>
+      <a href="{% url 'logout' %}">Logout</a>
+    </nav>
+
+    <h1>{% if form.instance.pk %}Edit Fee{% else %}Add Fee{% endif %}</h1>
+    <form method="POST">
+      {% csrf_token %} {{ form.as_p }}
+      <button type="submit">Save</button>
+    </form>
+  </body>
+</html>

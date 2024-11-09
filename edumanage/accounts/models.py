@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.utils import timezone
 
 class UserManager(BaseUserManager):
     def create_user(self, email, school_name, password=None):
@@ -100,3 +101,24 @@ class Faculty(models.Model):
 
     def __str__(self):
         return self.name
+    
+    
+class Event(models.Model):
+    id = models.AutoField(primary_key=True)
+    time = models.DateTimeField(default=timezone.now)  # Automatically set the current date and time
+    details = models.TextField()
+    image = models.ImageField(upload_to='events/', blank=True, null=True)  # Upload the image to 'media/events/'
+    school = models.ForeignKey(User, on_delete=models.CASCADE)  # Link to the school
+
+    def __str__(self):
+        return f'Event {self.id} - {self.details[:30]}'
+    
+    
+class Fee(models.Model):
+    student = models.ForeignKey(Student, related_name='fees', on_delete=models.CASCADE)  # Add a related_name here
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    due_date = models.DateField()
+    is_paid = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'Fee for {self.student.name} - {self.amount}'

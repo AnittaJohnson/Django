@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fee</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/fee.css' %}" />
+    <title>Fee Management</title>
+  </head>
+  <body>
+    <nav class="navbar">
+      <a
+        href="{% url 'school_details' %}"
+        class="navbar-brand"
+        style="font-size: 24px; font-weight: bold"
+        >EduManage</a
+      >
+      <a href="#" class="nav-link">Analytics</a>
+      <a href="{% url 'student_list' %}" class="nav-link">Students</a>
+      <a href="{% url 'faculty_list' %}" class="nav-link">Faculty</a>
+      <a href="{% url 'fee' %}" class="nav-link" style="color: #ffda78">Fee</a>
+      <a href="{% url 'event_list' %}" class="nav-link">Events</a>
+      <a href="{% url 'logout' %}" class="logout-link">Logout</a>
+      <span class="school-name">Welcome! {{ user.school_name }}</span>
+    </nav>
+
+    <div class="container">
+      <div class="tabs">
+        <button class="tab-button active" onclick="showTab('studentFees')">
+          Student Fees
+        </button>
+        <button class="tab-button" onclick="showTab('dues')">Dues</button>
+        <button class="tab-button" onclick="showTab('facultySalary')">
+          Faculty Salary3
+        </button>
+      </div>
+
+      <!-- Student Fees Section -->
+      <div id="studentFees" class="content active">
+        <h2>Student Fees</h2>
+
+        <table>
+          <thead>
+            <tr>
+                <th>ID</th>
+                <th>Student</th>
+                <th>Amount</th>
+                <th>Due Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in students %}
+            <tr>
+                <td>{{ student.id }}</td>  <!-- Assuming you want to show the fee ID -->
+                <td>{{ student.name }}</td>
+                <td>{{ student.fee }}</td>
+                
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6">No fees available.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        
+        </table>
+    </div>
+
+    <!-- Dues Section -->
+    <div id="dues" class="content">
+        <h2>Dues</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Student</th>
+                    <th>Pending Amount</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for fee in fees %}
+                {% if not fee.is_paid %}
+                <tr>
+                    <td>{{ fee.student.name }}</td>
+                    <td>{{ fee.amount }}</td>
+                    <td class="unpaid">Unpaid</td>
+                </tr>
+                {% endif %}
+                {% empty %}
+                <tr>
+                    <td colspan="3">No dues available.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Faculty Salary Section -->
+    <div id="facultySalary" class="content">
+        <h2>Faculty Salary</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Faculty</th>
+                    <th>Salary Amount</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for salary in salaries %}
+                <tr>
+                    <td>{{ salary.faculty.name }}</td>
+                    <td>{{ salary.salary_amount }}</td>
+                    <td class="{{ salary.is_paid|yesno:'paid,unpaid' }}">
+                        {{ salary.is_paid|yesno:'Paid,Unpaid' }}
+                    </td>
+                    <td>
+                        {% if not salary.is_paid %}
+                        <a href="{% url 'mark_salary_paid' salary.id %}">Mark as Paid</a>
+                        {% else %} Paid {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4">No salaries available.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function showTab(tabId) {
+            const tabs = document.querySelectorAll(".content");
+            const buttons = document.querySelectorAll(".tab-button");
+
+            tabs.forEach((tab) => {
+                tab.classList.remove("active");
+            });
+
+            buttons.forEach((button) => {
+                button.classList.remove("active");
+            });
+
+            document.getElementById(tabId).classList.add("active");
+            event.target.classList.add("active");
+        }
+    </script>
+</body>
+</html>
